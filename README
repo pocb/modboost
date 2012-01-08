@@ -1,0 +1,17 @@
+
+That project is an attempt to modularise Boost, thanks to both CMake and
+Ruby/Rake. The project is hosted on GitHub: http://github.com/pocb/modboost.
+
+There is (at least) another Boost modularisation initiative
+(https://svn.boost.org/trac/boost/wiki/CMakeModularizationStatus),
+relying on three GitHub-hosted projects:
+- http://github.com/ryppl/boost-modularize
+- http://github.com/boost-lib/boost
+- http://github.com/ryppl/boost-svn
+
+ModBoost relies on all the good ideas from that project and tries to achieve
+the same goals in a much simpler way. That can be achieved by using all
+the expressivity and efficiency of Rake/Ruby, rather than CMake,
+in order to handle the co-location of several modules (Boost libraries).
+
+
