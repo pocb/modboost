@@ -1,6 +1,6 @@
 # ModBoost configuration file
 default_base_repo: 'git://github.com/boost-lib'
-default_branch: master
+default_branch: trunk
 cmake_args: '-DTOOLCHAIN='
 publish_path: /tmp/modboost
 components:
