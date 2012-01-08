@@ -1,7 +1,7 @@
 # ModBoost configuration file
 default_base_repo: 'git://github.com/boost-lib'
 default_branch: master
-cmake_args: '-DCMAKE_BUILD_TYPE:STRING=Debug'
+cmake_args: '-DTOOLCHAIN='
 publish_path: /tmp/modboost
 components:
   accumulators: {}

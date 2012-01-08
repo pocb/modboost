@@ -149,10 +149,10 @@ SIMPLE_GIT_TASKS = [
   :status, :push, :pull
 ]
 SIMPLE_MAKE_TASKS = [
-  :check, :install, :clean, :rebuild_cache
+  :check, :install, :clean, :rebuild_cache, :test
 ]
 COMPLEX_TASKS = [
-  :clone, :checkout, :configure, :dist
+  :clone, :checkout, :configure, :build, :dist
 ]
 (SIMPLE_GIT_TASKS + SIMPLE_MAKE_TASKS + COMPLEX_TASKS).each do |t|
   desc "#{t.to_s.capitalize} on all components"
@@ -208,13 +208,24 @@ COMPONENTS.each do |cmp|
   
   file cmp_makefile => config_prereqs do
     mkdir_p cmp_build_path
-    ::Dir.chdir(cmp_build_path) do
-      do_shell "#{CMAKE_BIN} #{cmake_deps_args} #{CONF_CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=#{cmp_install_path} #{cmp_src_path}"
-    end
+    do_shell "#{CMAKE_BIN} #{cmake_deps_args} #{CONF_CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=#{cmp_install_path} -DBUILDDIR=#{cmp_build_path} -DBUILDSTEP=config -P build.cmake"
   end
   desc "Configure component #{cmp} in #{cmp_build_path}"
   task "configure_#{cmp}" => cmp_makefile
   task :configure => "configure_#{cmp}"
+
+  # Build tasks
+   
+  #cmake_deps_args = cmp_deps.map { |dep| "-DWITH_#{dep.upcase}_PREFIX=#{component_install_path dep}" }.join ' '
+  
+  cmp_build = "build_#{cmp}"
+  build_prereqs = ["configure_#{cmp}"] + cmp_deps.map { |dep| "install_#{dep}" }
+  
+  task cmp_build => build_prereqs do
+    do_shell "#{CMAKE_BIN} #{cmake_deps_args} #{CONF_CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=#{cmp_install_path} -DBUILDDIR=#{cmp_build_path} -DBUILDSTEP=build -P build.cmake"
+  end
+  desc "Build component #{cmp} in #{cmp_build_path}"
+  task :build => "build_#{cmp}"
 
   # Wrappers for simple make tasks
 
@@ -257,4 +268,4 @@ COMPONENTS.each do |cmp|
   end
 end
 
-task :default => :install
+task :default => :build
